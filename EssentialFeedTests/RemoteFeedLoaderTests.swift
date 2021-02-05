@@ -35,6 +35,19 @@ class RemoteFeedLoaderTests: XCTestCase {
         XCTAssertEqual(client.requestedURLs, [url, url])
     }
     
+    func test_load_deliversErrorOnClientError() {
+        let (sut, client) = makeSUT()
+        
+        client.error = RemoteFeedLoader.Error.connectivity
+        
+        var capturedErrors: [RemoteFeedLoader.Error] = []
+        sut.load { error in
+            capturedErrors.append(error)
+        }
+        
+        XCTAssertEqual(capturedErrors, [.connectivity])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(url: URL = URL(string: "https://a-url.com")!) -> (sut: RemoteFeedLoader, client: HTTPSClientSpy) {
@@ -45,8 +58,12 @@ class RemoteFeedLoaderTests: XCTestCase {
     
     private class HTTPSClientSpy: HTTPClient {
         var requestedURLs = [URL]()
+        var error: Error?
         
-        func get(from url: URL) {
+        func get(from url: URL, completion: @escaping (Error) -> Void) {
+            if let error = error {
+                completion(error)
+            }
             requestedURLs.append(url)
         }
     }
