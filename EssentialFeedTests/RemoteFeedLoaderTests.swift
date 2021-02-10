@@ -70,7 +70,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let (sut, client) = makeSUT()
         
         expect(sut, toCompleteWithResult: .success([])) {
-            let validEmptyJSON = Data("{\"items\": []}".utf8)
+            let validEmptyJSON = makeItemsJSON([])
             client.complete(withStatusCode: 200, data: validEmptyJSON)
         }
     }
