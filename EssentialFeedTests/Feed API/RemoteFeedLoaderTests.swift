@@ -175,7 +175,7 @@ class RemoteFeedLoaderTests: XCTestCase {
                     file: file,
                     line: line
                 )
-            case let (.failure(recievedError), .failure(expectedError)):
+            case let (.failure(recievedError as RemoteFeedLoader.Error), .failure(expectedError as RemoteFeedLoader.Error)):
                 XCTAssertEqual(
                     recievedError,
                     expectedError,
